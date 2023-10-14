@@ -1,18 +1,14 @@
-use wgpu::{Surface, Device, Queue, SurfaceConfiguration, PowerPreference, RequestAdapterOptions};
-use winit::{dpi::PhysicalSize, window::Window, event::WindowEvent};
-
-
 pub struct State {
-    surface: Surface,
-    device: Device,
-    queue: Queue,
-    config: SurfaceConfiguration,
-    pub size: PhysicalSize<u32>,
-    window: Window
+    surface: wgpu::Surface,
+    device: wgpu::Device,
+    queue: wgpu::Queue,
+    config: wgpu::SurfaceConfiguration,
+    pub size: winit::dpi::PhysicalSize<u32>,
+    window: winit::window::Window
 }
 
 impl State {
-    pub async fn new(window: Window) -> Self {
+    pub async fn new(window: winit::window::Window) -> Self {
         let size = window.inner_size();
 
         // The instance is a handle to our GPU
@@ -29,8 +25,8 @@ impl State {
         let surface = unsafe { instance.create_surface(&window) }.unwrap();
 
         let adapter = instance.request_adapter(
-            &RequestAdapterOptions {
-                power_preference: PowerPreference::default(),
+            &wgpu::RequestAdapterOptions {
+                power_preference: wgpu::PowerPreference::default(),
                 compatible_surface: Some(&surface),
                 force_fallback_adapter: false,
             },
@@ -80,7 +76,7 @@ impl State {
         }
     }
     
-    pub fn window(&self) -> &Window {
+    pub fn window(&self) -> &winit::window::Window {
         &self.window
     }
 
@@ -93,7 +89,7 @@ impl State {
         }
     }
 
-    pub fn input(&mut self, _event: &WindowEvent) -> bool {
+    pub fn input(&mut self, _event: &winit::event::WindowEvent) -> bool {
         false
     }
 
