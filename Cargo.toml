@@ -33,3 +33,6 @@ web-sys = { version = "0.3.64", features = [
     "Window",
     "Element",
 ]}
+
+[env]
+RUST_BACKTRACE = "1"

@@ -1,7 +1,7 @@
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-use winit::{event::*, event_loop::EventLoop, window::WindowBuilder};
+use winit::{event::*, event_loop::{EventLoop, ControlFlow}, window::WindowBuilder};
 
 use crate::state::State;
 
@@ -43,26 +43,51 @@ pub async fn run() {
             .expect("Couldn't append canvas to document body.");
     }
 
-    let state = State::new(window).await;
+    let mut state = State::new(window).await;
 
     // Event Loop
     event_loop.run(move |event, _, control_flow| match event {
         Event::WindowEvent {
             ref event,
             window_id,
-        } if window_id == state.window().id() => match event {
-            WindowEvent::CloseRequested
+        } if window_id == state.window().id() => if !state.input(event) {
+            match event {
+                WindowEvent::CloseRequested
             | WindowEvent::KeyboardInput {
-                input:
-                    KeyboardInput {
+                    input: KeyboardInput {
                         state: ElementState::Pressed,
                         virtual_keycode: Some(VirtualKeyCode::Escape),
                         ..
                     },
                 ..
-            } => control_flow.set_exit(),
-            _ => {}
+                } => control_flow.set_exit(),
+                WindowEvent::Resized(physical_size) => {
+                    state.resize(*physical_size);
+                },
+                WindowEvent::ScaleFactorChanged { new_inner_size, .. } => {
+                    // new_inner_size is &&mut so we have to dereference it twice
+                    state.resize(**new_inner_size);
+                },
+                _ => {}
+            }
         },
+        Event::RedrawRequested(window_id) if window_id == state.window().id() => {
+            state.update();
+            match state.render() {
+                Ok(_) => {}
+                // Reconfigure the surface if lost
+                Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
+                // The system is out of memory, we should probably quit
+                Err(wgpu::SurfaceError::OutOfMemory) => *control_flow = ControlFlow::Exit,
+                // All other errors (Outdated, Timeout) should be resolved by the next frame
+                Err(e) => eprintln!("{:?}", e),
+            }
+        }
+        Event::MainEventsCleared => {
+            // RedrawRequested will only trigger once, unless we manually
+            // request it.
+            state.window().request_redraw();
+        }
         _ => {}
     });
 }
