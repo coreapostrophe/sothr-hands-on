@@ -1,14 +1,14 @@
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-use winit::{
-    event::*,
-    event_loop::{ControlFlow, EventLoop},
-    window::WindowBuilder,
-};
+use winit::{event::*, event_loop::EventLoop, window::WindowBuilder};
+
+use crate::state::State;
+
+pub mod state;
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]
-pub fn run() {
+pub async fn run() {
     cfg_if::cfg_if! {
         if #[cfg(target_arch = "wasm32")] {
             std::panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -18,8 +18,11 @@ pub fn run() {
         }
     }
 
+    // Window Setup
     let event_loop = EventLoop::new();
-    let window = WindowBuilder::new().build(&event_loop).unwrap();
+    let window = WindowBuilder::new()
+        .with_title("Wgpu Demo")
+        .build(&event_loop).unwrap();
 
     #[cfg(target_arch = "wasm32")]
     {
@@ -40,11 +43,14 @@ pub fn run() {
             .expect("Couldn't append canvas to document body.");
     }
 
+    let state = State::new(window).await;
+
+    // Event Loop
     event_loop.run(move |event, _, control_flow| match event {
         Event::WindowEvent {
             ref event,
             window_id,
-        } if window_id == window.id() => match event {
+        } if window_id == state.window().id() => match event {
             WindowEvent::CloseRequested
             | WindowEvent::KeyboardInput {
                 input:
@@ -54,7 +60,7 @@ pub fn run() {
                         ..
                     },
                 ..
-            } => *control_flow = ControlFlow::Exit,
+            } => control_flow.set_exit(),
             _ => {}
         },
         _ => {}

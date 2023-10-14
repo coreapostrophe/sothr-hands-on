@@ -1,3 +1,3 @@
 fn main() {
-    demolib::run();
+    pollster::block_on(demolib::run());
 }
