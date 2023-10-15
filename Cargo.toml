@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
-    "src/sotrh",
+    "crates/sotrh",
 ]
 
 [workspace.package]

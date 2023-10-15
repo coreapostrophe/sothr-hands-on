@@ -6,7 +6,7 @@ const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
 module.exports = ({package_name}) => ({
   entry: `./web/${package_name}`,
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, `./web/${package_name}/dist`),
     filename: 'index.js',
   },
   plugins: [
@@ -14,11 +14,10 @@ module.exports = ({package_name}) => ({
       template: `./web/${package_name}/index.html`,
     }),
     new WasmPackPlugin({
-      crateDirectory: path.resolve(__dirname, package_name),
+      crateDirectory: path.resolve(__dirname, `crates/${package_name}`),
       extraArgs: '--target web',
+      outDir: path.resolve(__dirname, `crates/${package_name}/pkg`)
     }),
-    // Have this example work in Edge which doesn't ship `TextEncoder` or
-    // `TextDecoder` at this time.
     new ProvidePlugin({
       TextDecoder: ['text-encoding', 'TextDecoder'],
       TextEncoder: ['text-encoding', 'TextEncoder'],
@@ -27,7 +26,7 @@ module.exports = ({package_name}) => ({
   mode: 'development',
   resolve: {
     alias: {
-      src: path.resolve(__dirname, 'src'),
+      crates: path.resolve(__dirname, 'crates'),
     },
   },
   experiments: {
