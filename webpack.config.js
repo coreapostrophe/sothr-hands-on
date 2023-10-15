@@ -3,20 +3,19 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {ProvidePlugin} = require('webpack');
 const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
 
-module.exports = ({package_name}) => ({
-  entry: `./web/${package_name}`,
+module.exports = ({
+  entry: `./web`,
   output: {
-    path: path.resolve(__dirname, `./web/${package_name}/dist`),
+    path: path.resolve(__dirname, `dist`),
     filename: 'index.js',
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: `./web/${package_name}/index.html`,
+      template: `./web/index.html`,
     }),
     new WasmPackPlugin({
-      crateDirectory: path.resolve(__dirname, `crates/${package_name}`),
-      extraArgs: '--target web',
-      outDir: path.resolve(__dirname, `crates/${package_name}/pkg`)
+      crateDirectory: path.resolve(__dirname, `.`),
+      extraArgs: '--target web'
     }),
     new ProvidePlugin({
       TextDecoder: ['text-encoding', 'TextDecoder'],
@@ -26,7 +25,7 @@ module.exports = ({package_name}) => ({
   mode: 'development',
   resolve: {
     alias: {
-      crates: path.resolve(__dirname, 'crates'),
+      pkg: path.resolve(__dirname, 'pkg'),
     },
   },
   experiments: {

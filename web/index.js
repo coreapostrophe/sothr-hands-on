@@ -1,4 +1,4 @@
-import init from 'crates/sotrh/pkg';
+import init from 'pkg';
 
 init().then((test) => {
     console.log("loaded");
