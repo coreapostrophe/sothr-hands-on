@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build:web": "webpack",
-    "dev": "webpack serve",
-    "build:wasm": "wasm-pack build --target web"
+    "sotrh:build:web": "webpack --env package_name=sotrh",
+    "sotrh:dev": "webpack serve --env package_name=sotrh",
+    "sotrh:build:wasm": "wasm-pack build src/sotrh --target web"
   },
   "prettier": "@vercel/style-guide/prettier",
   "author": "Daveren Cordero<daverencordero@gmail.com>",

@@ -26,7 +26,7 @@ impl State {
                 force_fallback_adapter: false,
             },
         ).await.unwrap();
-        
+
         let (device, queue) = adapter.request_device(
             &wgpu::DeviceDescriptor {
                 features: wgpu::Features::empty(),
@@ -39,7 +39,7 @@ impl State {
             },
             None, // Trace path
         ).await.unwrap();
-        
+
         let surface_caps = surface.get_capabilities(&adapter);
 
         let surface_format = surface_caps.formats.iter()
@@ -61,7 +61,7 @@ impl State {
             label: Some("Shader"), 
             source: wgpu::ShaderSource::Wgsl(include_str!("shaders/shader.wgsl").into())
         });
-        
+
         let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { 
             label: Some("Render Pipeline Layout"), 
             bind_group_layouts: &[], 
@@ -113,7 +113,7 @@ impl State {
             render_pipeline
         }
     }
-    
+
     pub fn window(&self) -> &winit::window::Window {
         &self.window
     }
@@ -165,7 +165,7 @@ impl State {
 
         self.queue.submit(std::iter::once(encoder.finish()));
         output.present();
-    
+
 
         Ok(())
     }

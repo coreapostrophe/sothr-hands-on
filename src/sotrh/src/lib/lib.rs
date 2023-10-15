@@ -3,7 +3,7 @@ use wasm_bindgen::prelude::*;
 
 use winit::{event::*, event_loop::{EventLoop, ControlFlow}, window::WindowBuilder};
 
-use crate::state::State;
+use self::state::State;
 
 pub mod state;
 

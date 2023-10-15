@@ -1,4 +1,12 @@
-/target
-/pkg
-/node_modules
-/package-lock.json
+# Build
+**/target
+**/pkg
+
+# Node
+**/node_modules
+
+# IDE
+/.vscode
+
+# Rust
+**/cargo.lock
